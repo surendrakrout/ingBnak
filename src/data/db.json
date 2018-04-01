@@ -1,0 +1,38 @@
+{
+    "login":
+    {
+        "status":"success",
+        "message":"Valid User"
+  
+    },
+    "course":[{
+        "courseName":"ReactJs",
+        "courseTitle":"redux",
+        "link":"https://stackoverflow.com/redux",
+        "topic":[{"topicName": "redux concept"}]
+     },
+     {
+     "courseName":"AngJs",
+     "courseTitle":"Basic",
+     "link":"https://stackoverflow.com/ang",
+     "topic":[{"topicName": "ang concept"}]
+        },
+        {
+        "courseName":"AngJs1",
+        "courseTitle":"Basic",
+        "link":"https://stackoverflow.com/ang1",
+        "topic":[{"topicName": "ang concept"}]
+        },
+        {
+        "courseName":"AngJs2",
+        "courseTitle":"Basic",
+        "link":"https://stackoverflow.com/ang2",
+        "topic":[{"topicName": "ang concept"}]
+        },
+        {
+        "courseName":"AngJs3",
+        "courseTitle":"Basic",
+        "link":"https://stackoverflow.com/ang3",
+        "topic":[{"topicName": "ang concept"}]
+}]
+}

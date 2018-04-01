@@ -1,0 +1,195 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="shared-styles.html">
+
+
+<dom-module id="my-login">
+  <template>
+    <style>
+      :host {
+        display: block;
+        padding:0px;
+        margin: 0px;
+       --paper-toast-background-color: var(--app-primary-color)
+        
+      }
+      .container{
+        position: absolute;
+        width: 500px;
+        height: 400px;
+        z-index: 15;
+        top: 50%;
+        left: 50%;
+        margin: -200px 0 0 -250px;
+        background: #ffffff;
+        border:1px solid #ccc;
+        padding: 10px;
+        border-radius: 10px;
+      }
+      paper-input[label=username], paper-input[label=password] {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        border-radius: 7px;
+      }
+      .login-header{
+        color:#fff;
+        text-align: center;
+        margin-bottom: 20px;
+        padding: 5px;
+        font-size: 20px;
+        background-color: var(--app-primary-color);
+        border-radius: 7px;
+        
+      }
+      
+      paper-button.login-botton {
+        background-color:  var(--app-primary-color);
+        color: white;
+        margin-left: 40%;
+        padding:3px !important;
+        --paper-button-raised-keyboard-focus: {
+        background-color: var(--app-primary-color);
+        color: white !important;
+        };
+      }
+      iron-icon{
+        width:15px;
+        color: var(--app-primary-color);
+      }
+      paper-icon-button{
+        width:30px;
+      }
+     
+      paper-toast#loginMessege{
+        color:#fff;
+        position: absolute;
+        top:70px !important;
+        left:250px !important;
+        width: 100%;
+
+      }
+     
+    </style>
+
+      <iron-ajax id="loginUser"
+        handle-as="json"
+        on-response="_getResponseData"
+        debounce-duration="300"
+        content-type="application/json"
+        on-errror="_loginError">
+        
+      </iron-ajax>
+
+     <iron-form id="loginform">
+        <form>
+          <div class="container">
+            <paper-toast id="loginMessege" ></paper-toast>
+            <p class="login-header">Login</p>
+            <label for="username">User Name</label>
+            <paper-input label="username" id="username" tabindex="1" value="{{username}}"
+            required 
+            auto-validate 
+            error-message="User Name Required">
+              <div slot="suffix">
+                  <iron-icon icon="icons:account-circle"></iron-icon>
+                  
+                </div>
+
+            </paper-input>
+            <label for="password">Password</label>
+            <paper-input label="password" id="password" tabindex="1" type="password"
+            required 
+            auto-validate 
+            error-message="Password Required">
+              <div slot="suffix">
+                  <iron-icon icon="icons:visibility"></iron-icon>
+                </div>
+            </paper-input>
+            <p class="botton">
+              <paper-button raised class="custom login-botton"
+              id="login-botton"
+              on-tap="_validate"
+              tabindex="1">Login</paper-button>
+            </p>
+          </div>
+        </form>
+      </iron-form>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class MyLogin extends Polymer.Element {
+      static get is() { return 'my-login'; }
+      static get properties() {
+        return {
+          username: {
+            type: String,
+            reflectToAttribute: true
+          },
+          password: {
+            type: String,
+            reflectToAttribute: true
+          }
+          
+        };
+      }
+      ready(){
+        super.ready();
+      }
+      _validate(){
+        //debugger;
+        if(this.shadowRoot.querySelector("#loginform").validate()){
+          var password=this.shadowRoot.querySelector("#password").value
+          this.loginData={
+            "username":this.username,
+            "password":password
+          }
+//console.log(this.loginData);
+          var ajax=this.$.loginUser;
+          ajax.url="http://localhost:3000/login";
+          ajax.method="get";
+          ajax.body=this.loginData;
+          ajax.generateRequest();
+        }else{
+          console.log("Login error. Please try latter.")
+        }
+      }
+      _getResponseData(event,request){
+        var responseMsg = request.response.message;
+        if(responseMsg == "Valid User"){
+          if(!localStorage.loginUser){
+            localStorage.setItem("loginUser",this.username);
+          }
+            this.$.loginMessege.text="Login Successful";
+            this.$.loginMessege.open();
+            setTimeout(function(){
+              
+              this.routePage= document.querySelector('my-app');
+              this.routePage.set('route.path','addcourse')
+            },1000);
+          
+        }
+      }
+      _loginError(){
+        this.$.loginMessege.text="Login Failed. Wrong userid/passsword";
+        this.$.loginMessege.open();
+      }
+    }
+
+    window.customElements.define(MyLogin.is, MyLogin);
+  </script>
+</dom-module>
